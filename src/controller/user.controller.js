@@ -46,4 +46,46 @@ const activeUser = async (req, res) => {
     }
 }
 
-module.exports = { users, activeUser };
+const averageAgeUsers = async (req, res) => {
+    try {
+        const averageAgeUsersResult = await usersCollection.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    averageAge: { $avg: "$age" }
+                },
+            }
+        ]).toArray();
+
+        res.status(200).json(averageAgeUsersResult);
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+// List the top 5 most common favorite fruits among the users in descending order
+const favoriteFruits = async (req, res) => {
+    try {
+        const favoriteFruitsResult = await usersCollection.aggregate([
+            {
+                $group: {
+                    _id: "$favoriteFruit",
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: {
+                    count: -1
+                }
+            }
+        ]).toArray();
+
+        res.status(200).json(favoriteFruitsResult);
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+module.exports = { users, activeUser, averageAgeUsers, favoriteFruits };
