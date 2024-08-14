@@ -1,5 +1,5 @@
 const express = require("express");
-const { users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale } = require("../controller/user.controller");
+const { users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale, highestUserByCountry } = require("../controller/user.controller");
 
 const router = express.Router();
 
@@ -8,5 +8,6 @@ router.get("/activeUser", activeUser);
 router.get("/averageAgeUsers", averageAgeUsers);
 router.get("/favoriteFruits", favoriteFruits);
 router.get("/totalMaleFemale", totalMaleFemale);
+router.get("/highestUserByCountry", highestUserByCountry);
 
 module.exports = router;

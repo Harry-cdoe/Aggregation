@@ -117,4 +117,33 @@ const totalMaleFemale = async (req, res) => {
     }
 }
 
-module.exports = { users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale };
+// which country has the highest number of registered users
+const highestUserByCountry = async (req, res) => {
+    try {
+        const highestUserByCountryResult = await usersCollection.aggregate([
+            {
+                $group: {
+                    _id: "$company.location.country",
+                    userCount: {
+                        $sum: 1
+                    },
+                },
+            },
+            {
+                $sort: {
+                    userCount: -1
+                },
+            },
+            {
+                $limit: 3
+            }
+        ]).toArray();
+
+        res.status(200).json(highestUserByCountryResult);
+    } catch (err) {
+        console.error('Error fetching reistered users: ', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+module.exports = { users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale, highestUserByCountry };
