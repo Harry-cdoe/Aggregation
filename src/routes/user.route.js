@@ -1,5 +1,5 @@
 const express = require("express");
-const { users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale, highestUserByCountry, uniqueEyeColor } = require("../controller/user.controller");
+const { users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale, highestUserByCountry, uniqueEyeColor, averageTagsPerUser } = require("../controller/user.controller");
 
 const router = express.Router();
 
@@ -10,5 +10,6 @@ router.get("/favoriteFruits", favoriteFruits);
 router.get("/totalMaleFemale", totalMaleFemale);
 router.get("/highestUserByCountry", highestUserByCountry);
 router.get("/uniqueEyeColor", uniqueEyeColor);
+router.get("/averageTagsPerUser", averageTagsPerUser);
 
 module.exports = router;

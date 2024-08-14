@@ -160,7 +160,7 @@ const uniqueEyeColor = async (req, res) => {
             },
             {
                 $sort: {
-                    eyeColorCount: 1 
+                    eyeColorCount: 1
                 },
             }
         ]).toArray();
@@ -168,9 +168,21 @@ const uniqueEyeColor = async (req, res) => {
         res.status(200).json(uniqueEyeColorResult);
     } catch (err) {
         console.error('Error fetching eyecolor: ', err);
-        res.status
-
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 }
 
-module.exports = { users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale, highestUserByCountry, uniqueEyeColor };
+// Average number of tags per user
+const averageTagsPerUser = async (req, res) => {
+    try {
+        const averageTagsPerUserResult = await usersCollection.aggregate([
+            {
+                
+            }
+        ]).toArray();
+    } catch (err) {
+        console.error('Error fetching Data: ', err);
+        res.status(500).json({ error: 'Internal Server Error' });    }
+}
+
+module.exports = { users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale, highestUserByCountry, uniqueEyeColor, averageTagsPerUser };
