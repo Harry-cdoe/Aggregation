@@ -175,14 +175,48 @@ const uniqueEyeColor = async (req, res) => {
 // Average number of tags per user
 const averageTagsPerUser = async (req, res) => {
     try {
+        // 1st way
+        // const averageTagsPerUserResult = await usersCollection.aggregate([
+        //     {
+        //         $unwind: "$tags"
+        //     },
+        //     {
+        //         $group: {
+        //             _id: "$_id",
+        //             numberOfTags: { $sum: 1 }
+        //         }
+        //     },
+        //     {
+        //         $group: {
+        //             _id: null,
+        //             averageNumberOfTags: { $avg: "$numberOfTags" }
+        //         }
+        //     }
+        // ]).toArray();
+
+        // 2nd Way
         const averageTagsPerUserResult = await usersCollection.aggregate([
             {
-                
+                $addFields: {
+                    numberOfTags: {
+                        $size: { $ifNull: ["$tags", []] }
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    averageNumberOfTags: { $avg: "$numberOfTags" }
+                }
             }
         ]).toArray();
+
+        res.status(200).json(averageTagsPerUserResult)
+
     } catch (err) {
         console.error('Error fetching Data: ', err);
-        res.status(500).json({ error: 'Internal Server Error' });    }
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 }
 
 module.exports = { users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale, highestUserByCountry, uniqueEyeColor, averageTagsPerUser };
