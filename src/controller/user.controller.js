@@ -146,4 +146,31 @@ const highestUserByCountry = async (req, res) => {
     }
 };
 
-module.exports = { users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale, highestUserByCountry };
+// Unique EyeColor
+const uniqueEyeColor = async (req, res) => {
+    try {
+        const uniqueEyeColorResult = await usersCollection.aggregate([
+            {
+                $group: {
+                    _id: "$eyeColor",
+                    eyeColorCount: {
+                        $sum: 1
+                    },
+                },
+            },
+            {
+                $sort: {
+                    eyeColorCount: 1 
+                },
+            }
+        ]).toArray();
+
+        res.status(200).json(uniqueEyeColorResult);
+    } catch (err) {
+        console.error('Error fetching eyecolor: ', err);
+        res.status
+
+    }
+}
+
+module.exports = { users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale, highestUserByCountry, uniqueEyeColor };
