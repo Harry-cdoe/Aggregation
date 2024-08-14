@@ -78,6 +78,9 @@ const favoriteFruits = async (req, res) => {
                 $sort: {
                     count: -1
                 }
+            },
+            {
+                $limit: 2
             }
         ]).toArray();
 
@@ -88,4 +91,30 @@ const favoriteFruits = async (req, res) => {
     }
 }
 
-module.exports = { users, activeUser, averageAgeUsers, favoriteFruits };
+// Total number of males and females
+const totalMaleFemale = async (req, res) => {
+    try {
+        const totalMaleFemaleResult = await usersCollection.aggregate([
+            {
+                $group: {
+                    _id: "$gender",
+                    count: {
+                        $sum: 1
+                    },
+                },
+            },
+            {
+                $sort: {
+                    count: -1
+                }
+            },
+        ]).toArray();
+
+        res.status(200).json(totalMaleFemaleResult);
+    } catch (err) {
+        console.error('Error fetching genders: ', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+module.exports = { users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale };
