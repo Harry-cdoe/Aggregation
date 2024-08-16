@@ -219,4 +219,49 @@ const averageTagsPerUser = async (req, res) => {
     }
 }
 
-module.exports = { users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale, highestUserByCountry, uniqueEyeColor, averageTagsPerUser };
+// How many users have 'enim' as one of their tags
+const evimTags = async (req, res) => {
+    try {
+        const evimTagsResult = await usersCollection.aggregate([
+            { $match: { tags: "enim" }, },
+            { $count: "userWithEnimTag" }
+        ]).toArray();
+
+        res.status(200).json(evimTagsResult);
+    } catch (err) {
+        console.error('Data fethcing errors: ', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+// what are the names and age of users who are incative and have 'velit' as a tag?
+const incativeUsers = async (req, res) => {
+    try {
+        const incativeUsersResult = await usersCollection.aggregate([
+            { $match: { isActive: false, tags: 'velit' } },
+            { $project: { name: 1, age: 1 } }
+        ]).toArray();
+
+        res.status(200).json(incativeUsersResult);
+    } catch (err) {
+        console.error('Data fethcing error: ', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+// How many users have a phone number starting with '+1 (940)'
+const specialPhoneNumber = async (req, res) => {
+    try {
+        const specialPhoneNumberResult = await usersCollection.aggregate([
+            { $match: { "company.phone": /^\+1 \(940\)/ } }, // Regex to match phone numbers starting with +1 (940)
+            { $count: 'userWithSpecialPhoneNumber' } // Count the number of matching documents
+        ]).toArray(); // Convert cursor to array
+
+        res.status(200).json(specialPhoneNumberResult);
+    } catch (err) {
+        console.error("Data fethcing error: ", err);
+        res.status(500).json({ error: 'Internal Server Error' })
+    }
+}
+
+module.exports = { users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale, highestUserByCountry, uniqueEyeColor, averageTagsPerUser, evimTags, incativeUsers, specialPhoneNumber };
