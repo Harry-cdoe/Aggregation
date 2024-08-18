@@ -6,7 +6,6 @@ const users = async (req, res) => {
     try {
         // Fetch all users
         const users = await usersCollection.find().toArray();
-        console.log('Fetched users:', users);
 
         // Prepare response data
         const responseData = {
@@ -323,9 +322,27 @@ const checkUser = async (req, res) => {
     }
 }
 
+// List all companies located in the USA with their corresponding user count
+const userCountByCountry = async (req, res) => {
+    try {
+        const userCountByCountryResult = await usersCollection.aggregate([
+            { $match: { "company.location.country": "USA" } },
+            {
+                $group:
+                    { _id: "$company.title", userCount: { $sum: 1 } }
+            }
+        ]).toArray();
+
+        res.status(200).json(userCountByCountryResult);
+    } catch (err) {
+        console.error("Data fethcing error: ", err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
 
 module.exports = {
     users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale,
     highestUserByCountry, uniqueEyeColor, averageTagsPerUser, evimTags, incativeUsers,
-    specialPhoneNumber, registeredRecently, usersFavoriteFruit, secondTagAd, checkUser
+    specialPhoneNumber, registeredRecently, usersFavoriteFruit, secondTagAd, checkUser,
+    userCountByCountry
 };

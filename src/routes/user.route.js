@@ -1,9 +1,20 @@
 const express = require("express");
-const { users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale,
-    highestUserByCountry, uniqueEyeColor, averageTagsPerUser, evimTags,
-    incativeUsers, specialPhoneNumber, registeredRecently, usersFavoriteFruit,
+const { users,
+    activeUser,
+    averageAgeUsers,
+    favoriteFruits,
+    totalMaleFemale,
+    highestUserByCountry,
+    uniqueEyeColor,
+    averageTagsPerUser,
+    evimTags,
+    incativeUsers,
+    specialPhoneNumber,
+    registeredRecently,
+    usersFavoriteFruit,
     secondTagAd,
-    checkUser } = require("../controller/user.controller");
+    checkUser,
+    userCountByCountry } = require("../controller/user.controller");
 
 const router = express.Router();
 
@@ -22,5 +33,6 @@ router.get("/registeredRecently", registeredRecently);
 router.get("/usersFavoriteFruit", usersFavoriteFruit);
 router.get("/secondTagAd", secondTagAd);
 router.get("/checkUser", checkUser);
+router.get("/userCountByCountry", userCountByCountry);
 
 module.exports = router;
