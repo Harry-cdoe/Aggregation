@@ -262,6 +262,70 @@ const specialPhoneNumber = async (req, res) => {
         console.error("Data fethcing error: ", err);
         res.status(500).json({ error: 'Internal Server Error' })
     }
+};
+
+// Who has registered the most recently ?
+const registeredRecently = async (req, res) => {
+    try {
+        const registeredRecentlyResult = await usersCollection.aggregate([
+            { $sort: { registered: -1 } },
+            { $limit: 4 },
+            { $project: { name: 1, registered: 1 } }
+        ]).toArray();
+
+        res.status(200).json(registeredRecentlyResult);
+    } catch (err) {
+        console.error("Data fethcing error: ", err);
+        res.status(500).json({ error: 'Internal Server Error' })
+    }
 }
 
-module.exports = { users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale, highestUserByCountry, uniqueEyeColor, averageTagsPerUser, evimTags, incativeUsers, specialPhoneNumber };
+// categorize users by their favorite fruit
+const usersFavoriteFruit = async (req, res) => {
+    try {
+        const usersFavoriteFruitResult = await usersCollection.aggregate([
+            { $group: { _id: "$favoriteFruit", users: { $push: "$name" }, count: { $sum: 1 } } },
+        ]).toArray();
+
+        res.status(200).json(usersFavoriteFruitResult);
+    } catch (err) {
+        console.error("Data fethcing error: ", err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+// How many users have 'ad' as the second tag in their list of tags
+const secondTagAd = async (req, res) => {
+    try {
+        const secondTagAdResult = await usersCollection.aggregate([
+            { $match: { "tags.1": "ad" } },
+            { $count: "secondTagAd" }
+        ]).toArray();
+
+        res.status(200).json(secondTagAdResult);
+    } catch (err) {
+        console.error("Data fethcing error: ", err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+
+// Find users who have both 'enim' and 'id' as their tags
+const checkUser = async (req, res) => {
+    try {
+        const checkUserResult = await usersCollection.aggregate([
+            { $match: { tags: { $all: ['enim', 'id'] } } }
+        ]).toArray();
+        res.status(200).json(checkUserResult);
+    } catch (err) {
+        console.error("Data fethcing error: ", err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+
+module.exports = {
+    users, activeUser, averageAgeUsers, favoriteFruits, totalMaleFemale,
+    highestUserByCountry, uniqueEyeColor, averageTagsPerUser, evimTags, incativeUsers,
+    specialPhoneNumber, registeredRecently, usersFavoriteFruit, secondTagAd, checkUser
+};
